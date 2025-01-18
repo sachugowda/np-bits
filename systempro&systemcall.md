@@ -33,7 +33,7 @@ This guide delves into the fundamental concepts of system programming and system
 6. [User Mode vs. Kernel Mode](#user-mode-vs-kernel-mode)
 7. [Security and System Calls](#security-and-system-calls)
 8. [Conclusion](#conclusion)
-9. [Additional Resources](#additional-resources)
+
 
 ---
 
@@ -1112,26 +1112,5 @@ By mastering system programming concepts and understanding how system calls oper
 
 ---
 
-## Additional Resources
-
-- **Books:**
-  - *Operating System Concepts* by Abraham Silberschatz, Peter B. Galvin, and Greg Gagne.
-  - *Modern Operating Systems* by Andrew S. Tanenbaum.
-  - *The Linux Programming Interface* by Michael Kerrisk.
-
-- **Online Tutorials and Documentation:**
-  - [GNU C Library Documentation](https://www.gnu.org/software/libc/manual/html_node/index.html)
-  - [Linux System Calls Reference](http://man7.org/linux/man-pages/man2/syscall.2.html)
-  - [POSIX Threads Programming](https://computing.llnl.gov/tutorials/pthreads/)
-
-- **Courses:**
-  - [Operating Systems and System Programming](https://www.coursera.org/learn/os-power-user) - Coursera
-  - [Introduction to Operating Systems](https://www.edx.org/course/introduction-to-operating-systems) - edX
-  - [Advanced Operating Systems](https://www.udacity.com/course/advanced-operating-systems--ud923) - Udacity
-
-- **Tools:**
-  - **GDB:** GNU Debugger for debugging applications and tracing system calls.
-  - **Valgrind:** Tool for memory debugging, memory leak detection, and profiling.
-  - **strace:** Traces system calls and signals.
 
 Exploring these resources will deepen your understanding of system programming and empower you to leverage system calls effectively in your projects.
