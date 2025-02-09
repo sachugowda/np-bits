@@ -322,3 +322,172 @@ consumer_thread.join()
 
 ### **Conclusion**
 Threads are lightweight, efficient, and essential for concurrent programming. Synchronization mechanisms like mutexes, locks, and condition variables ensure safe thread interaction. Proper thread management helps prevent race conditions and deadlocks.
+
+---
+### **Signals: An Overview**
+
+A **signal** is a notification sent to a process to notify it of an event. Signals are a form of inter-process communication (IPC) widely used in operating systems like Unix/Linux. When a signal is sent to a process, it interrupts the process's normal flow of execution and can trigger a predefined action (like termination) or invoke a **signal handler**.
+
+---
+
+### **Key Concepts of Signals**
+
+1. **Signal Generation**:
+   - Signals can be generated in multiple ways:
+     - **Hardware Events**: Division by zero, invalid memory access.
+     - **Kernel Events**: Child process termination, timer expiration.
+     - **User Events**: Signals sent manually via commands like `kill` or via APIs like `raise()` or `kill()`.
+
+2. **Signal Delivery**:
+   - Signals are delivered asynchronously to the process.
+   - A process can **block** or **ignore** certain signals, but some signals (e.g., `SIGKILL` and `SIGSTOP`) cannot be caught or ignored.
+
+3. **What Happens When a Signal Is Received?**
+   - **Default Action**: Each signal has a default action, such as terminating the process, ignoring the signal, or stopping the process.
+   - **Signal Handler**: A process can override the default action by defining a custom **signal handler** to execute specific code upon receiving the signal.
+
+4. **Signal Handler**:
+   - A signal handler is a user-defined function that gets executed when a signal is received.
+   - The operating system interrupts the process and executes the handler function.
+
+---
+
+### **Common Signals**
+| Signal  | Description                        | Default Action         |
+|---------|------------------------------------|------------------------|
+| `SIGINT` | Interrupt (Ctrl+C)                 | Terminate the process  |
+| `SIGTERM`| Termination request                | Terminate the process  |
+| `SIGHUP` | Hangup (e.g., terminal closed)     | Terminate the process  |
+| `SIGKILL`| Kill signal (cannot be ignored)    | Terminate the process  |
+| `SIGSTOP`| Stop the process (cannot be ignored)| Stop the process       |
+| `SIGCHLD`| Child process stopped/terminated   | Ignore by default      |
+| `SIGALRM`| Alarm clock (timer expiration)     | Terminate the process  |
+
+---
+
+### **Real-World Examples**
+1. **Process Termination**: 
+   - Pressing `Ctrl+C` sends the `SIGINT` signal to terminate the process.
+   - Example: Terminating a running Python script using `Ctrl+C`.
+
+2. **Restarting Services**:
+   - Sending the `SIGHUP` signal to a service causes it to reload its configuration.
+   - Example: Restarting `nginx` without stopping it:
+     ```bash
+     sudo kill -HUP <nginx_pid>
+     ```
+
+3. **Child Process Notification**:
+   - A parent process receives `SIGCHLD` when its child process terminates.
+   - Example: Shells use this to clean up terminated background jobs.
+
+---
+
+### **Signal Handling in Programming**
+
+#### **1. Default Signal Behavior**
+By default, signals like `SIGTERM` terminate a process. However, this behavior can be overridden with a custom signal handler.
+
+---
+
+#### **2. Writing a Signal Handler**
+In Python, you can use the `signal` module to handle signals.
+
+##### **Example: Handling `SIGINT` (Ctrl+C)**
+```python
+import signal
+import time
+
+# Signal handler function
+def handle_sigint(signum, frame):
+    print("\nSIGINT received! Exiting gracefully...")
+    exit(0)
+
+# Attach the signal handler to SIGINT
+signal.signal(signal.SIGINT, handle_sigint)
+
+# Main program loop
+print("Press Ctrl+C to terminate the program...")
+while True:
+    print("Working...")
+    time.sleep(2)
+```
+
+#### **Explanation**:
+1. `signal.signal(signal.SIGINT, handle_sigint)`: Registers the `handle_sigint` function to handle `SIGINT`.
+2. When `Ctrl+C` is pressed, `handle_sigint` is executed, exiting gracefully.
+
+---
+
+#### **3. Handling Timer Signals (SIGALRM)**
+```python
+import signal
+
+# Signal handler for SIGALRM
+def handle_alarm(signum, frame):
+    print("Alarm triggered!")
+
+# Set an alarm for 5 seconds
+signal.signal(signal.SIGALRM, handle_alarm)
+signal.alarm(5)
+
+print("Waiting for the alarm...")
+signal.pause()  # Wait for the signal
+```
+
+---
+
+### **Advanced Signal Handling**
+
+#### **Ignoring Signals**
+You can ignore signals by setting the handler to `signal.SIG_IGN`.
+
+```python
+import signal
+import time
+
+# Ignore SIGINT
+signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+print("SIGINT is ignored. Try pressing Ctrl+C...")
+time.sleep(10)
+print("Exiting after sleep.")
+```
+
+---
+
+#### **Handling `SIGCHLD` (Child Process Termination)**
+```python
+import os
+import signal
+
+# Signal handler for SIGCHLD
+def handle_sigchld(signum, frame):
+    print("Child process terminated.")
+
+# Attach handler
+signal.signal(signal.SIGCHLD, handle_sigchld)
+
+# Fork a child process
+pid = os.fork()
+
+if pid == 0:
+    # Child process
+    print("Child process running...")
+    os._exit(0)  # Exit child process
+else:
+    # Parent process
+    os.wait()  # Wait for child to terminate
+    print("Parent process continues...")
+```
+
+---
+
+### **Signal Handler: Key Points**
+1. **Reentrancy**: Signal handlers should be lightweight and avoid performing complex tasks. Signals can interrupt at any time, so avoid using non-reentrant functions like `malloc` or `printf` in handlers.
+2. **Blocked Signals**: Signals can be blocked using `signal.pthread_sigmask` (in multithreaded programs) to prevent certain signals from being delivered to a thread.
+
+---
+
+### **Conclusion**
+Signals are a powerful IPC mechanism for asynchronous event handling. By leveraging custom signal handlers, programs can gracefully handle events like termination, timer expiration, or child process termination. Proper use of signals enhances the robustness and responsiveness of applications.
